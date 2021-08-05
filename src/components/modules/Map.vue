@@ -1,6 +1,6 @@
 <template>
   <gmap-map
-      :center="{lat:34.7, lng:135.8}"
+      :center="center"
       :zoom="16"
       style="width: 100%; height: 640px"
   >
@@ -16,6 +16,14 @@
 </template>
 <script>
 export default {
-  
-}
+  data() {
+    return {
+      center: { lat: 34.684346, lng: 135.836375 },
+      markers: [
+        {position: {lat: 34.684, lng: 135.836}},
+        {position: {lat: 34.68532, lng: 135.83645}},
+      ]
+    };
+  },
+};
 </script>
