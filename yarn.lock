@@ -1720,6 +1720,13 @@
   optionalDependencies:
     prettier "^1.18.2"
 
+"@vue/composition-api@^1.0.6":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.6.tgz#a28e73b6a0939d446badfbde1b532bfdf3bb7c1d"
+  integrity sha512-P4abcx92znWAG6HaB4p5zCwGVDptfiOaV3kDSwA9Zwc0Nb4urDh5RvCQYEE8uE2SDQxqcR4r2ijWW5gzfVIUwQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@vue/preload-webpack-plugin@^1.1.0":
   version "1.1.2"
   resolved "https://registry.npm.taobao.org/@vue/preload-webpack-plugin/download/@vue/preload-webpack-plugin-1.1.2.tgz?cache=0&sync_timestamp=1613215080607&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40vue%2Fpreload-webpack-plugin%2Fdownload%2F%40vue%2Fpreload-webpack-plugin-1.1.2.tgz#ceb924b4ecb3b9c43871c7a429a02f8423e621ab"
@@ -8307,7 +8314,7 @@ tslib@^1.9.0:
   resolved "https://registry.nlark.com/tslib/download/tslib-1.14.1.tgz?cache=0&sync_timestamp=1623452008922&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftslib%2Fdownload%2Ftslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha1-zy04vcNKE0vK8QkcQfZhni9nLQA=
 
-tslib@^2.1.0:
+tslib@^2.1.0, tslib@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.0.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
   integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
@@ -8611,6 +8618,11 @@ vue-cli-plugin-vuetify@~2.4.1:
     null-loader "^3.0.0"
     semver "^7.1.2"
     shelljs "^0.8.3"
+
+vue-demi@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.11.2.tgz#faa06da53887c493a695b997f4fcb4784a667990"
+  integrity sha512-J+X8Au6BhQdcej6LY4O986634hZLu55L0ewU2j8my7WIKlu8cK0dqmdUxqVHHMd/cMrKKZ9SywB/id6aLhwCtA==
 
 vue-demi@^0.4.5:
   version "0.4.5"
