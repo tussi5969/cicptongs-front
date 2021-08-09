@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "firebase": "^8.8.1",
     "vue": "^2.6.11",
     "vue2-google-maps": "^0.10.7",
+    "vuefire": "^3.0.0-alpha.2",
     "vuetify": "^2.5.8"
   },
   "devDependencies": {
