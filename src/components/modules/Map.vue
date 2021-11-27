@@ -58,19 +58,22 @@ export default {
         // marker color
         switch (doc.data().type) {
           case "PET bottle":
-            iconcolor = "blue";
+            iconcolor = "#3261AB"; //blue 
             break;
           case "plastic":
-            iconcolor = "red";
+            iconcolor = "#131420"; //gray
             break;
           case "can":
-            iconcolor = "orange";
+            iconcolor = "#C7243A"; //red
             break;
           case "paper":
-            iconcolor = "green";
+            iconcolor = "#009250"; //green
+            break;
+          case "tabacco":
+            iconcolor = "#EDAD0B"; //yellow
             break;
           default:
-            iconcolor = "gray";
+            iconcolor = "white";
         }
         const marker = new window.google.maps.Marker({
           position: {lat:doc.data().latitude, lng:doc.data().longitude},
@@ -79,11 +82,11 @@ export default {
           map: map,
           icon: {
               path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
-              scale: 10,           //サイズ
+              scale: 12,           //サイズ
               fillColor: iconcolor,  //塗り潰し色
-              fillOpacity: 0.2,   //塗り潰し透過率
-              strokeColor: "black", //枠線の色
-              strokeWeight: 2    //枠線の幅
+              fillOpacity: 0.8,   //塗り潰し透過率
+              strokeColor: "white", //枠線の色
+              strokeWeight: 1   //枠線の幅
           },
         });
         marker.addListener("click", () => {
