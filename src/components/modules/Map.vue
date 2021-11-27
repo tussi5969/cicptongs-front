@@ -7,16 +7,12 @@
         class="map"
         :center="center"
         :zoom="12"
+        :options="{
+          streetViewControl: false,
+          rotateControl: false,
+          mapTypeControl: false,
+        }"
     >
-      <gmap-marker
-        :key="index"
-        v-for="(g, index) in garbages"
-        :position="{lat: g.latitude, lng: g.longitude}"
-        :clickable="true"
-        :draggable="false"
-        @click="toggleInfoWindow(g, index)"
-      >
-      </gmap-marker>
       <gmap-info-window
         :options="infoOptions"
         :position="infoWindowPos"
@@ -25,12 +21,7 @@
       >
         <div v-html="infoContent"></div>
       </gmap-info-window>
-
     </gmap-map>
-    <!-- <div v-for="(garbage, index) in garbages" :key="index"> -->
-      <!-- <div>{{garbages.index}}</div> -->
-      <!-- <div>{{garbage.latitude}}</div> -->
-    <!-- </div> -->
   </div>
 </template>
 <script>
@@ -49,46 +40,83 @@ export default {
       infoOptions: {
         pixelOffset: {
           width: 0,
-          height: -35
+          height: 0
         }
       },
       garbages: [],
     };
   },
-  updated() {
-    let map = this.$refs.map.$mapObject;
+  created() {},
+  mounted() {
     var garbagePos = [];
-    this.garbages.forEach(e => {
-      console.log(typeof(e.latitude));
-      garbagePos.push(
-        {position: {lat:e.latitude, lng:e.longitude}}
+
+    // Get Firestore data
+    db.collection('garbage').orderBy("time", "asc").get().then(docs => {
+      let map = this.$refs.map.$mapObject;
+      var iconcolor = "black"
+      docs.forEach((doc, index) => {
+        // marker color
+        switch (doc.data().type) {
+          case "PET bottle":
+            iconcolor = "blue";
+            break;
+          case "plastic":
+            iconcolor = "red";
+            break;
+          case "can":
+            iconcolor = "orange";
+            break;
+          case "paper":
+            iconcolor = "green";
+            break;
+          default:
+            iconcolor = "gray";
+        }
+        const marker = new window.google.maps.Marker({
+          position: {lat:doc.data().latitude, lng:doc.data().longitude},
+          draggable: false,
+          clickable: true,
+          map: map,
+          icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
+              scale: 10,           //サイズ
+              fillColor: iconcolor,  //塗り潰し色
+              fillOpacity: 0.2,   //塗り潰し透過率
+              strokeColor: "black", //枠線の色
+              strokeWeight: 2    //枠線の幅
+          },
+        });
+        marker.addListener("click", () => {
+          this.toggleInfoWindow(doc.data(), index);
+        });
+
+        garbagePos.push(
+          {position: {lat:doc.data().latitude, lng:doc.data().longitude}}
+        );
+      });
+
+      var latLngBounds = new window.google.maps.LatLngBounds(
+        // sw
+        {
+          lat: Math.min(...garbagePos.map(d => d.position.lat)),
+          lng: Math.min(...garbagePos.map(d => d.position.lng))
+        },
+        // ne
+        {
+          lat: Math.max(...garbagePos.map(d => d.position.lat)),
+          lng: Math.max(...garbagePos.map(d => d.position.lng))
+        }
       );
+      map.fitBounds(latLngBounds,10);
+    }).catch((error) => {
+      console.log(error);
+      this.garbages = [];
     });
-    console.log(garbagePos);
-    console.log(Math.min(...garbagePos.map(d => d.position.lat)));
-    var latLngBounds = new window.google.maps.LatLngBounds(
-      // sw
-      {
-        lat: Math.min(...garbagePos.map(d => d.position.lat)),
-        lng: Math.min(...garbagePos.map(d => d.position.lng))
-      },
-      // ne
-      {
-        lat: Math.max(...garbagePos.map(d => d.position.lat)),
-        lng: Math.max(...garbagePos.map(d => d.position.lng))
-      }
-    );
-    map.fitBounds(latLngBounds,10);
-  },
-  computed: {},
-  created() {
-    console.log(this.garbages);
-    // TODO:garbagesの情報を常にmap上に表示させる
+
   },
   methods: {
     toggleInfoWindow(garbage,idx) {
       this.infoWindowPos = {lat: garbage.latitude, lng: garbage.longitude};
-      console.log(typeof(garbage.latitude));
       this.infoContent = this.getInfoWindowContent(garbage);
       if (this.currentMidx == idx) {
         this.infoWindowOpen = !this.infoWindowOpen;
@@ -97,7 +125,6 @@ export default {
         this.infoWindowOpen = true;
         this.currentMidx = idx;
       }
-      // this.mapFitBounds();
     },
 
     getInfoWindowContent(garbage) {
@@ -112,17 +139,8 @@ export default {
         `
       );
     },
-
-    // mapFitBounds() {
-      
-    // }
   },
-  firestore() {
-    return {
-      garbages: db.collection('garbage').orderBy("time", "asc")
-    }
-  }
-};
+  };
 </script>
 
 <style scoped>
