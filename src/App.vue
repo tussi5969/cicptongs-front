@@ -1,31 +1,16 @@
 <template>
   <v-app>
-    <v-app-bar
-      color="light-blue accent-4"
-      dark
-      absolute
-      app
-    >
-      <v-spacer />
-      <v-toolbar-title>CICP-TONGS</v-toolbar-title>
-      <v-spacer />
-    </v-app-bar>
-    <v-main>
-      <Main/>
-    </v-main>
+    <Main/>
   </v-app>
 </template>
-
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import Main from './components/pages/Main.vue'
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld,
     Main
-  }
+  },
 }
 </script>
 

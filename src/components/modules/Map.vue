@@ -1,27 +1,29 @@
 <template>
-  <div class=map_container>
-    <gmap-map
-        id="map_canvas"
-        ref="map"
-        style="width: 100%; height: 100%; position: absolute; left:0; top:0"
-        class="map"
-        :center="center"
-        :zoom="12"
-        :options="{
-          streetViewControl: false,
-          rotateControl: false,
-          mapTypeControl: false,
-        }"
-    >
-      <gmap-info-window
-        :options="infoOptions"
-        :position="infoWindowPos"
-        :opened="infoWindowOpen"
-        @closeclick="infoWindowOpen=false"
+  <div class="main_container">
+    <div class="map_container">
+      <gmap-map
+          id="map_canvas"
+          ref="map"
+          style="width: 100%; height: calc(100% - 56px - 60px); position: absolute; left:0; top:116px;"
+          class="map"
+          :center="center"
+          :zoom="12"
+          :options="{
+            streetViewControl: false,
+            rotateControl: false,
+            mapTypeControl: false,
+          }"
       >
-        <div v-html="infoContent"></div>
-      </gmap-info-window>
-    </gmap-map>
+        <gmap-info-window
+          :options="infoOptions"
+          :position="infoWindowPos"
+          :opened="infoWindowOpen"
+          @closeclick="infoWindowOpen=false"
+        >
+          <div v-html="infoContent"></div>
+        </gmap-info-window>
+      </gmap-map>
+    </div>
   </div>
 </template>
 <script>
@@ -47,9 +49,11 @@ export default {
     };
   },
   created() {},
+  updated() {
+    console.log(this.nowId);
+  },
   mounted() {
     var garbagePos = [];
-
     // Get Firestore data
     db.collection('garbage').orderBy("time", "asc").get().then(docs => {
       let map = this.$refs.map.$mapObject;
@@ -92,7 +96,6 @@ export default {
         marker.addListener("click", () => {
           this.toggleInfoWindow(doc.data(), index);
         });
-
         garbagePos.push(
           {position: {lat:doc.data().latitude, lng:doc.data().longitude}}
         );
@@ -115,7 +118,11 @@ export default {
       console.log(error);
       this.garbages = [];
     });
-
+  },
+  computed: {
+    nowId() {
+      return this.$store.getters['id'];
+    }
   },
   methods: {
     toggleInfoWindow(garbage,idx) {
@@ -147,4 +154,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
