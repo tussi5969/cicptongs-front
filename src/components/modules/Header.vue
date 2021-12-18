@@ -16,8 +16,5 @@ export default {
 </script>
 
 <style scoped>
-/* .select-input-none >>> .v-select__selections input {
-  width: 0;
-} */
 
 </style>
