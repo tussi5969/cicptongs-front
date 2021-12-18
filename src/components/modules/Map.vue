@@ -4,7 +4,7 @@
       <gmap-map
           id="map_canvas"
           ref="map"
-          style="width: 100%; height: calc(100% - 56px - 60px); position: absolute; left:0; top:116px;"
+          style="width: 100%; height: calc(100% - 56px - 60px - 48px); position: absolute; left:0; top:116px;"
           class="map"
           :center="center"
           :zoom="12"
@@ -91,80 +91,84 @@ export default {
           let map = this.$refs.map.$mapObject;
           var iconcolor = "black";
           docs.forEach((doc, index) => {
-            if (mode == 0) {
-              // marker color
-              switch (doc.data().type) {
-                case "PET bottle":
-                  iconcolor = "#3261AB"; //blue 
-                  break;
-                case "plastic":
-                  iconcolor = "#131420"; //gray
-                  break;
-                case "can":
-                  iconcolor = "#C7243A"; //red
-                  break;
-                case "paper":
-                  iconcolor = "#009250"; //green
-                  break;
-                case "tabacco":
-                  iconcolor = "#EDAD0B"; //yellow
-                  break;
-                default:
-                  iconcolor = "white";
+            if (doc.data().latitude != null && doc.data().longitude != null){
+              if (mode == 0) {
+                // marker color
+                switch (doc.data().type) {
+                  case "PET bottle":
+                    iconcolor = "#3261AB"; //blue 
+                    break;
+                  case "plastic":
+                    iconcolor = "#131420"; //gray
+                    break;
+                  case "can":
+                    iconcolor = "#C7243A"; //red
+                    break;
+                  case "paper":
+                    iconcolor = "#009250"; //green
+                    break;
+                  case "tabacco":
+                    iconcolor = "#EDAD0B"; //yellow
+                    break;
+                  default:
+                    iconcolor = "white";
+                }
+                var marker = new window.google.maps.Marker({
+                  position: {lat:doc.data().latitude, lng:doc.data().longitude},
+                  draggable: false,
+                  clickable: true,
+                  map: map,
+                  icon: {
+                    path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
+                      scale: 12,           //サイズ
+                      fillColor: iconcolor,  //塗り潰し色
+                      fillOpacity: 0.8,   //塗り潰し透過率
+                      strokeColor: "white", //枠線の色
+                      strokeWeight: 1   //枠線の幅
+                  },
+                });
+                marker.addListener("click", () => {
+                  this.toggleInfoWindow(doc.data(), index);
+                });
               }
-              var marker = new window.google.maps.Marker({
-                position: {lat:doc.data().latitude, lng:doc.data().longitude},
-                draggable: false,
-                clickable: true,
-                map: map,
-                icon: {
+              else {
+                marker = new window.google.maps.Marker({
+                  position: {lat:doc.data().latitude, lng:doc.data().longitude},
+                  draggable: false,
+                  clickable: false,
+                  map: map,
+                  icon: {
                     path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
-                    scale: 12,           //サイズ
-                    fillColor: iconcolor,  //塗り潰し色
-                    fillOpacity: 0.8,   //塗り潰し透過率
-                    strokeColor: "white", //枠線の色
-                    strokeWeight: 1   //枠線の幅
-                },
-              });
-              marker.addListener("click", () => {
-                this.toggleInfoWindow(doc.data(), index);
-              });
+                      scale: 12,           //サイズ
+                      fillColor: gpsMarkerColorPalette[doc.data().user_id],  //塗り潰し色
+                      fillOpacity: 0.8,   //塗り潰し透過率
+                      strokeColor: "white", //枠線の色
+                      strokeWeight: 1   //枠線の幅
+                  },
+                });
+              }         
+              this.markers.push(marker);
+              garbagePos.push(
+                {position: {lat:doc.data().latitude, lng:doc.data().longitude}}
+              );
             }
-            else {
-              marker = new window.google.maps.Marker({
-                position: {lat:doc.data().latitude, lng:doc.data().longitude},
-                draggable: false,
-                clickable: false,
-                map: map,
-                icon: {
-                    path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
-                    scale: 12,           //サイズ
-                    fillColor: gpsMarkerColorPalette[doc.data().user_id],  //塗り潰し色
-                    fillOpacity: 0.8,   //塗り潰し透過率
-                    strokeColor: "white", //枠線の色
-                    strokeWeight: 1   //枠線の幅
-                },
-              });
-            }         
-            this.markers.push(marker);
-            garbagePos.push(
-              {position: {lat:doc.data().latitude, lng:doc.data().longitude}}
-            );
           });
 
-          var latLngBounds = new window.google.maps.LatLngBounds(
-            // sw
-            {
-              lat: Math.min(...garbagePos.map(d => d.position.lat)),
-              lng: Math.min(...garbagePos.map(d => d.position.lng))
-            },
-            // ne
-            {
-              lat: Math.max(...garbagePos.map(d => d.position.lat)),
-              lng: Math.max(...garbagePos.map(d => d.position.lng))
+          if (garbagePos.length > 0) {
+            var latLngBounds = new window.google.maps.LatLngBounds(
+                // sw
+              {
+                lat: Math.min(...garbagePos.map(d => d.position.lat)),
+                lng: Math.min(...garbagePos.map(d => d.position.lng))
+              },
+              // ne
+              {
+                lat: Math.max(...garbagePos.map(d => d.position.lat)),
+                lng: Math.max(...garbagePos.map(d => d.position.lng))
+              }
+            );
+            map.fitBounds(latLngBounds,10);
             }
-          );
-          map.fitBounds(latLngBounds,10);
           }
         }).catch((error) => {
           console.log(error);
