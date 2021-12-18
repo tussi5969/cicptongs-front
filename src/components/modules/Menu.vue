@@ -1,7 +1,13 @@
 <template>
   <div class="select">
-    <v-row>
-      <v-col cols="4" class="ml-10 mt-2">
+    <v-row
+      class="mr-0"
+    >
+      <v-col 
+        cols="8"
+        md="6"
+        class="mt-2"
+      >
         <v-tabs
           fixed-tabs
           background-color="#E0E0E0"
@@ -20,7 +26,10 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="1" class="mr-10 pt-2 text-h5">
+      <v-col 
+        cols="3" 
+        md="1"
+        class="mr-2 pt-2 text-h5">
         <v-select
           pt-0
           single-line
@@ -39,7 +48,7 @@ export default {
   data() {
     return{
       now_id: '',
-      ids:['ALL',0,1,2,3,4,5,6,7,8,9,10]
+      ids:['ALL',1,2,3,4,5,6,7,8,9,10]
     }
   },
   created() {
