@@ -15,7 +15,8 @@
     "vue-demi": "^0.11.2",
     "vue2-google-maps": "^0.10.7",
     "vuefire": "^3.0.0-alpha.2",
-    "vuetify": "^2.5.8"
+    "vuetify": "^2.5.8",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
