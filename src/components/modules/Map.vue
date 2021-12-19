@@ -25,32 +25,44 @@
       </gmap-map>
 
     </div>
-    <div
-      class="guide"
-    >
-      <div class="guide-content">
-      <div class="guide-content-flex">
-        <div class="marker">
-          <div class="marker-circle can"></div>
-          <div class="marker-name">缶</div>
-        </div>
-        <div class="marker">
-          <div class="marker-circle petbottle"></div>
-          <div class="marker-name">ペットボトル</div>
-        </div>
-        <div class="marker">
-          <div class="marker-circle tobacco"></div>
-          <div class="marker-name">タバコ</div>
-        </div>
-        <div class="marker">
-          <div class="marker-circle paper"></div>
-          <div class="marker-name">紙類</div>
-        </div>
-        <div class="marker">
-          <div class="marker-circle plastic"></div>
-          <div class="marker-name">プラスチック</div>
+    <div class="garbage" v-if="showGarbageGuide">
+      <div class="guide">
+        <div class="guide-content">
+          <div class="guide-content-flex">
+            <div class="marker">
+              <div class="marker-circle can"></div>
+              <div class="marker-name">缶</div>
+            </div>
+            <div class="marker">
+              <div class="marker-circle petbottle"></div>
+              <div class="marker-name">ペットボトル</div>
+            </div>
+            <div class="marker">
+              <div class="marker-circle tobacco"></div>
+              <div class="marker-name">タバコ</div>
+            </div>
+            <div class="marker">
+              <div class="marker-circle paper"></div>
+              <div class="marker-name">紙類</div>
+            </div>
+            <div class="marker">
+              <div class="marker-circle plastic"></div>
+              <div class="marker-name">プラスチック</div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    <div class="garbage" v-if="showGPSGuide">
+      <div class="guide">
+        <div class="guide-content">
+          <div class="guide-content-flex" v-for="(color, index) in gpsMarkerColorPalette" v-bind:key="color.id">
+            <div class="marker-gps">
+              <div class="marker-circle" v-bind:style="{ background: color }"></div>
+              <div class="marker-name">{{ index }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,12 +87,16 @@ export default {
         }
       },
       garbages: [],
-      markers: []
+      markers: [],
+      showGarbageGuide: true,
+      showGPSGuide: false,
+      gpsMarkerColorPalette: ["#1AC3A6", "#34CF7A", "#41A1E1", "#A667BF", "#F2C500", "#EA8B1D", "#EB5D49", "#475B6F", "#ECF0F1", "#9FAEAF"]
     };
   },
   created() {},
   mounted() {
     this.showMapData(this.nowId, this.nowMode);
+    this.showGuide(this.nowMode);
   },
   computed: {
     nowId() {
@@ -96,6 +112,7 @@ export default {
     },
     nowMode(val) {
       this.showMapData(this.nowId, val);
+      this.showGuide(val);
     }
   },
   methods: {
@@ -105,12 +122,20 @@ export default {
       });
       this.markers = [];
     },
+    showGuide(mode) {
+      if (mode == 0){
+        this.showGPSGuide = false;
+        this.showGarbageGuide = true;
+      } else if (mode == 1){
+        this.showGarbageGuide = false;
+        this.showGPSGuide = true;
+      }
+    },
     showMapData(id, mode) {
       var searchId = (id == 'ALL') ? 0 : id;
       var searchSign = (id == 'ALL') ? '>=' : '==';
       var modeName = (mode == 0) ? 'garbage' : 'gps';
       var garbagePos = [];
-      const gpsMarkerColorPalette = ["#1AC3A6", "#34CF7A", "#41A1E1", "#A667BF", "#F2C500", "#EA8B1D", "#EB5D49", "#475B6F", "#ECF0F1", "#9FAEAF"]
       this.resetMarker();
       // Get Firestore data
       db.collection(modeName).where("user_id", searchSign, searchId).get().then(docs => {
@@ -169,7 +194,7 @@ export default {
                   icon: {
                     path: window.google.maps.SymbolPath.CIRCLE,//シンボル円
                       scale: 12,           //サイズ
-                      fillColor: gpsMarkerColorPalette[doc.data().user_id],  //塗り潰し色
+                      fillColor: this.gpsMarkerColorPalette[doc.data().user_id],  //塗り潰し色
                       fillOpacity: 0.8,   //塗り潰し透過率
                       strokeColor: "white", //枠線の色
                       strokeWeight: 1   //枠線の幅
@@ -237,10 +262,9 @@ export default {
 .guide {
   position: absolute;
   right: 0px;
-  top: 180px;
-  /* height: 400px; */
-  padding: 20px 0;
-  width: 64px;
+  top: 172px;
+  padding: 12px 0;
+  width: 72px;
   border-radius: 8px 0 0 8px;
   background-color: white;
   box-shadow: 0 0 4px gray;
@@ -257,11 +281,15 @@ export default {
   margin: 12px auto;
 }
 
+.marker-gps{
+  margin: 4px auto;
+}
+
 .marker-circle{
   margin: 0 auto;
   margin-bottom: 4px;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   opacity: 0.8;
   border-radius: 50px;
   border: solid 1px white;
