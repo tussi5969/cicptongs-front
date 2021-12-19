@@ -23,6 +23,35 @@
           <div v-html="infoContent"></div>
         </gmap-info-window>
       </gmap-map>
+
+    </div>
+    <div
+      class="guide"
+    >
+      <div class="guide-content">
+      <div class="guide-content-flex">
+        <div class="marker">
+          <div class="marker-circle can"></div>
+          <div class="marker-name">缶</div>
+        </div>
+        <div class="marker">
+          <div class="marker-circle petbottle"></div>
+          <div class="marker-name">ペットボトル</div>
+        </div>
+        <div class="marker">
+          <div class="marker-circle tobacco"></div>
+          <div class="marker-name">タバコ</div>
+        </div>
+        <div class="marker">
+          <div class="marker-circle paper"></div>
+          <div class="marker-name">紙類</div>
+        </div>
+        <div class="marker">
+          <div class="marker-circle plastic"></div>
+          <div class="marker-name">プラスチック</div>
+        </div>
+      </div>
+      </div>
     </div>
   </div>
 </template>
@@ -205,5 +234,58 @@ export default {
 </script>
 
 <style scoped>
+.guide {
+  position: absolute;
+  right: 0px;
+  top: 180px;
+  /* height: 400px; */
+  padding: 20px 0;
+  width: 64px;
+  border-radius: 8px 0 0 8px;
+  background-color: white;
+  box-shadow: 0 0 4px gray;
+}
 
+.guide-content-flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+.marker{
+  margin: 12px auto;
+}
+
+.marker-circle{
+  margin: 0 auto;
+  margin-bottom: 4px;
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+  border-radius: 50px;
+  border: solid 1px white;
+  box-shadow: 0px 0px 2px gray;
+}
+
+.can{
+  background-color: #C7243A;
+}
+.petbottle{
+  background-color: #3261AB;
+}
+.tobacco{
+  background-color: #EDAD0B;
+}
+.paper{
+  background-color: #009250;
+}
+.plastic{
+  background-color: #131420;
+}
+
+.marker-name{
+  font-weight: bold;
+  font-size: 10px;
+}
 </style>
