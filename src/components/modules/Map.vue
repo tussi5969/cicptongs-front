@@ -90,7 +90,7 @@ export default {
       markers: [],
       showGarbageGuide: true,
       showGPSGuide: false,
-      gpsMarkerColorPalette: ["#1AC3A6", "#34CF7A", "#41A1E1", "#A667BF", "#F2C500", "#EA8B1D", "#EB5D49", "#475B6F", "#ECF0F1", "#9FAEAF"]
+      gpsMarkerColorPalette: ["#004D40", "#9CCC65", "#41A1E1", "#A667BF", "#F2C500", "#EA8B1D", "#EB5D49", "#475B6F", "#ECF0F1", "#9FAEAF"]
     };
   },
   created() {},
