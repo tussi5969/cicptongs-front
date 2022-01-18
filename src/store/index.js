@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    id: 'ALL',
+    id: 9,
     mode: 0  // 0: garbage, 1: GPS
   },
   mutations: {
