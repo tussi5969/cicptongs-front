@@ -4,7 +4,7 @@
       <gmap-map
           id="map_canvas"
           ref="map"
-          style="width: 100%; height: calc(100% - 56px - 60px - 48px); position: absolute; left:0; top:116px;"
+          style="width: 100%; height: calc(100% - 56px - 48px); position: absolute; left:0; top:56px;"
           class="map"
           :center="center"
           :zoom="12"
@@ -14,17 +14,44 @@
             mapTypeControl: false,
           }"
       >
-        <gmap-info-window
-          :options="infoOptions"
-          :position="infoWindowPos"
-          :opened="infoWindowOpen"
-          @closeclick="infoWindowOpen=false"
-        >
-          <div v-html="infoContent"></div>
-        </gmap-info-window>
       </gmap-map>
+      <v-navigation-drawer
+        v-model="markerInfo"
+        clipped-left
+        absolute
+      >
+        <div class="infolist-img">
+          <img v-bind:src="garbageImg" width="256px" height="256px">
+        </div>
+        <div class="infolist">
+          <div class="infolist-name">{{ garbageName }}</div>
+          <div class="infolist-section">
+            <div class="infolist-section-title">Time</div>
+            <div class="infolist-section-content">{{ garbageTime }}</div>
+          </div>
+          <div class="infolist-section">
+            <div class="infolist-section-title">ID</div>
+            <div class="infolist-section-content">{{ garbageUserId }}</div>
+          </div>
+          <div class="infolist-section">
+            <div class="infolist-section-title">Area</div>
+            <div class="infolist-section-content">Lat: {{ garbagePos.lat }}</div>
+            <div class="infolist-section-content">Lng: {{ garbagePos.lng }}</div>
+          </div>
+        </div>
 
+      </v-navigation-drawer>
     </div>
+
+    <div class="point" v-if="nowId != 'ALL'">
+      <div class="point-desc">現在のポイント</div>
+      <span class="point-count">
+        <em class="point-count-num"> {{userPoint}} </em>
+        <em class="point-count-unit"> pt</em>
+      </span>
+    </div>
+
+    <!-- 凡例 -->
     <div class="garbage" v-if="showGarbageGuide">
       <div class="guide">
         <div class="guide-content">
@@ -65,6 +92,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 <script>
@@ -88,6 +116,16 @@ export default {
       },
       garbages: [],
       markers: [],
+      markerInfo: false,
+      garbageImg: null,
+      garbageName: null,
+      garbageUserId: null,
+      garbageTime: null,
+      garbagePos: {
+        lat: null,
+        lng: null
+      },
+      userPoint: 0,
       showGarbageGuide: true,
       showGPSGuide: false,
       gpsMarkerColorPalette: ["#004D40", "#9CCC65", "#41A1E1", "#A667BF", "#F2C500", "#EA8B1D", "#EB5D49", "#475B6F", "#ECF0F1", "#9FAEAF"]
@@ -135,16 +173,20 @@ export default {
       var searchId = (id == 'ALL') ? 0 : id;
       var searchSign = (id == 'ALL') ? '>=' : '==';
       var modeName = (mode == 0) ? 'garbage' : 'gps';
+      // var modeName = (mode == 0) ? 'garbage_test' : 'gps_test';
       var garbagePos = [];
       this.resetMarker();
       // Get Firestore data
       db.collection(modeName).where("user_id", searchSign, searchId).get().then(docs => {
+        if (mode == 0) { 
+          this.userPoint = docs.size;
+        }
         if (docs.size == 0) {
           console.log("データがありません");
         } else {
           let map = this.$refs.map.$mapObject;
           var iconcolor = "black";
-          docs.forEach((doc, index) => {
+          docs.forEach((doc) => {
             if (doc.data().latitude != null && doc.data().longitude != null){
               if (mode == 0) {
                 // marker color
@@ -182,7 +224,16 @@ export default {
                   },
                 });
                 marker.addListener("click", () => {
-                  this.toggleInfoWindow(doc.data(), index);
+                  var infoData = doc.data()
+                  this.markerInfo = !this.markerInfo;
+                  this.garbageImg = infoData.img_url;
+                  this.garbageName = this.convertGarbageNameToJa(infoData.type);
+                  this.garbageTime = this.getStringFromDate(infoData.time);
+                  this.garbagePos = {
+                    lat: infoData.latitude,
+                    lng: infoData.longitude
+                  }
+                  this.garbageUserId = infoData.user_id;
                 });
               }
               else {
@@ -230,35 +281,56 @@ export default {
         });
     },
 
-    toggleInfoWindow(garbage,idx) {
-      this.infoWindowPos = {lat: garbage.latitude, lng: garbage.longitude};
-      this.infoContent = this.getInfoWindowContent(garbage);
-      if (this.currentMidx == idx) {
-        this.infoWindowOpen = !this.infoWindowOpen;
-      }
-      else {
-        this.infoWindowOpen = true;
-        this.currentMidx = idx;
-      }
+    getStringFromDate(date) {
+      var dateTime = new Date(date.seconds * 1000);
+      var outputStringDate = dateTime.toLocaleDateString() + ' ' + dateTime.toLocaleTimeString();
+      return outputStringDate;
     },
-
-    getInfoWindowContent(garbage) {
-      return (
-        `
-        <div class="card" style="width:104px; height:104px">
-          <div class="card-content" style="margin-left:6px">
-            <div><b style="font-size:16px; font-weight:900">${garbage.type}</b></div>
-            <img style="margin-top:8px; border-radius: 4px;" src="${garbage.img_url}" width="96" height="72">
-          </div>
-        </div>
-        `
-      );
-    },
+    convertGarbageNameToJa(enname) {
+      if (enname === "PET bottle"){
+        return "ペットボトル";
+      }else if (enname === "can"){
+        return "缶";
+      }else if (enname === "paper"){
+        return "紙類";
+      }else if (enname === "tabacco" || enname === "tobacco"){
+        return "タバコ";
+      }else if (enname === "plastic"){
+        return "プラスチック";
+      }
+    }
   },
   };
 </script>
 
 <style scoped>
+.point {
+  position: absolute;
+  right: 0px;
+  top: 68px;
+  padding: 8px 10px 0px;
+  width: 120px;
+  border-radius: 8px 0 0 8px;
+  background-color: white;
+  box-shadow: 0 0 4px gray;
+}
+
+.point-desc {
+  font-size: 12px;
+}
+
+.point-count {
+  justify-content: center;  
+  vertical-align:baseline;
+}
+
+.point-count-num {
+  font-size: 32px;
+  font-weight: bold;
+  color: #D04255;
+}
+
+
 .guide {
   position: absolute;
   right: 0px;
@@ -294,6 +366,27 @@ export default {
   border-radius: 50px;
   border: solid 1px white;
   box-shadow: 0px 0px 2px gray;
+}
+
+.infolist{
+  margin: 0 20px;
+  text-align: left;
+}
+
+.infolist-name{
+  font-weight: 900;
+  font-size: 32px;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.infolist-section{
+  margin-bottom: 20px;
+}
+
+.infolist-section-title{
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .can{

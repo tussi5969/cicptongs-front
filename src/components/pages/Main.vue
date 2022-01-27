@@ -1,10 +1,12 @@
 <template>
-  <div>
+  <v-app>
     <Header />
-    <Menu />
-    <Map />
+    <v-main>
+      <Menu />
+      <Map />
+    </v-main>
     <Footer />
-  </div>
+  </v-app>
 </template>
 <script>
 import Header from './../modules/Header.vue'

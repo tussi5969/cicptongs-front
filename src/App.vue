@@ -1,7 +1,7 @@
 <template>
-  <v-app>
+  <div>
     <Main/>
-  </v-app>
+  </div>
 </template>
 <script>
 import Main from './components/pages/Main.vue'

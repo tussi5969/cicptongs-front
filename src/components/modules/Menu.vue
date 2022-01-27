@@ -48,7 +48,7 @@ export default {
   data() {
     return{
       now_id: '',
-      ids:['ALL',0,1,2,3,4,5,6,7,8,9]
+      ids:['ALL'].concat([...Array(21).keys()])
     }
   },
   created() {
@@ -70,7 +70,7 @@ export default {
 .select{
   position: absolute;
   left: 0;
-  top: 60px;
+  top: 0px;
   width: 100%;
   height: 56px;
   background-color: #E0E0E0;
