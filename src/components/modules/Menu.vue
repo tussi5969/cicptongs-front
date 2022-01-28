@@ -8,21 +8,25 @@
         md="6"
         class="mt-2"
       >
-        <v-tabs
+        <!-- <v-tabs
           fixed-tabs
           background-color="#E0E0E0"
           @change="onChangeMode($event)"
+        > -->
+        <v-tabs
+          fixed-tabs
+          background-color="#E0E0E0"
         >
           <v-tab>
             <v-icon>
               mdi-sack
             </v-icon>
           </v-tab>
-          <v-tab>
+          <!-- <v-tab>
             <v-icon>
               mdi-map-marker-multiple
             </v-icon>
-          </v-tab>
+          </v-tab> -->
         </v-tabs>
       </v-col>
       <v-spacer />

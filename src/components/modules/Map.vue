@@ -172,7 +172,8 @@ export default {
     showMapData(id, mode) {
       var searchId = (id == 'ALL') ? 0 : id;
       var searchSign = (id == 'ALL') ? '>=' : '==';
-      var modeName = (mode == 0) ? 'garbage' : 'gps';
+      // var modeName = (mode == 0) ? 'garbage' : 'gps';
+      var modeName = 'garbage';
       // var modeName = (mode == 0) ? 'garbage_test' : 'gps_test';
       var garbagePos = [];
       this.resetMarker();
